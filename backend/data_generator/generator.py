@@ -1,7 +1,8 @@
 import csv
 from pathlib import Path
+from datetime import date
 
-CAMPURI = {
+CAMPURI = [
     "tranzactie_id",
     "client_id",
     "data",
@@ -11,7 +12,7 @@ CAMPURI = {
     "sold",
     "contraparte",
     "valuta",
-}
+]
 
 tranzactii_proba = [
     {
@@ -55,9 +56,28 @@ def scrie_csv(tranzactii, cale_fisier):
         writer.writeheader()
         writer.writerows(tranzactii)
 
+def genereaza_salarii(an, salariu_lunar):
+    tranzactii = []
+    for luna in range(1, 13):
+        tranzactie = {
+            "tranzactie_id": luna,
+            "client_id": "Client_001",
+            "data": date(an, luna, 28),
+            "descriere": "Salariu",
+            "debit": 0,
+            "credit": salariu_lunar,
+            "sold": 0,
+            "contraparte": "SC Exemplu SRL",
+            "valuta": "RON",
+        }
+        tranzactii.append(tranzactie)
+    return tranzactii
+
 if __name__ == "__main__":
     folder_data = Path (__file__).parent.parent / "data"
     folder_data.mkdir(exist_ok=True)
     cale = folder_data / "tranzactii.csv"
-    scrie_csv(tranzactii_proba, cale)
-    print(f"Am scris {len(tranzactii_proba)} tranzactii in {cale}")
+    salarii = genereaza_salarii(2026, 6000)
+    scrie_csv(salarii, cale)
+    print(f"Am scris {len(salarii)} tranzactii in {cale}")
+
