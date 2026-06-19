@@ -4,3 +4,5 @@ __pycache__/
 .env
 .idea/
 .DS_Store
+# Date generate (reproductibile din generator)
+data/
