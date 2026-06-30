@@ -3,7 +3,7 @@ import { useRef, useEffect } from 'react'
 export const disp = 'Space Grotesk, sans-serif'
 export const mono = 'IBM Plex Mono, monospace'
 export const ui = 'Inter, system-ui, sans-serif'
-export const API = 'http://127.0.0.1:8000'
+export const API = (import.meta.env as Record<string, string | undefined>).VITE_API_URL || 'http://127.0.0.1:8000'
 
 export interface Tranzactie {
   id: number; data: string; descriere: string; suma: number; valuta: string

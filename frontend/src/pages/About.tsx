@@ -37,6 +37,19 @@ export default function About() {
       <Sec titlu="Numele">
         De la Frank Abagnale Jr., escrocul devenit consultant FBI anti-fraudă — ideea că, pentru a prinde un escroc, trebuie să gândești ca unul.
       </Sec>
+
+      <Sec titlu="Resurse">
+        <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap', marginTop: 4 }}>
+          <a href="https://github.com/mihneabrb/abagnale" target="_blank" rel="noopener noreferrer"
+            style={{ display: 'inline-flex', alignItems: 'center', gap: 8, background: '#163E73', color: '#fff', textDecoration: 'none', borderRadius: 9, padding: '10px 18px', fontSize: 14, fontWeight: 500 }}>
+            ↗ Cod sursă pe GitHub
+          </a>
+          <a href="https://github.com/mihneabrb/abagnale#readme" target="_blank" rel="noopener noreferrer"
+            style={{ display: 'inline-flex', alignItems: 'center', gap: 8, background: '#fff', color: '#163E73', textDecoration: 'none', border: '0.5px solid #C7D4E3', borderRadius: 9, padding: '10px 18px', fontSize: 14, fontWeight: 500 }}>
+            Documentație (README)
+          </a>
+        </div>
+      </Sec>
     </main>
   )
 }
