@@ -1,13 +1,22 @@
 import io
+from pathlib import Path
 import pandas as pd
 from fastapi import FastAPI, UploadFile, File, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 
 from analysis.scoring import analizeaza, scor_risc_client
 from analysis.loader import incarca_csv
+from data_generator.generator import main as genereaza_date
 
 app = FastAPI(title="Abagnale API")
 app.add_middleware(CORSMiddleware, allow_origins=["*"], allow_methods=["*"], allow_headers=["*"])
+
+
+@app.on_event("startup")
+def asigura_date_demo():
+    cale = Path(__file__).parent.parent / "data" / "tranzactii.csv"
+    if not cale.exists():
+        genereaza_date()
 
 
 @app.get("/")
@@ -49,37 +58,22 @@ def _construieste_raspuns(df: pd.DataFrame):
 async def analiza(file: UploadFile = File(...)):
     if not file.filename.endswith(".csv"):
         raise HTTPException(status_code=400, detail="Doar fisiere CSV sunt acceptate")
-
     continut = await file.read()
     try:
         df = pd.read_csv(io.BytesIO(continut))
-
-        # Verificăm dacă coloana 'data' există înainte de conversie
-        if "data" not in df.columns:
-            raise ValueError("Coloana 'data' lipseste din CSV")
-
         df["data"] = pd.to_datetime(df["data"])
-
         for c in ["debit", "credit", "sold"]:
-            if c in df.columns:
-                df[c] = pd.to_numeric(df[c], errors="coerce").fillna(0)
-            else:
-                df[c] = 0.0  # Inițializăm cu 0 dacă lipsește, ca să nu crape mai jos
-
+            df[c] = pd.to_numeric(df[c], errors="coerce").fillna(0)
         df = df.sort_values(["client_id", "data"]).reset_index(drop=True)
-
-    except Exception as e:
-        # Printează eroarea exactă în terminalul unde rulează FastAPI
-        print(f"--- EROARE INTERNĂ CSV: {str(e)} ---")
-        raise HTTPException(
-            status_code=400,
-            detail=f"Eroare la procesarea CSV-ului: {str(e)}"
-        )
-
+    except Exception:
+        raise HTTPException(status_code=400, detail="Nu am putut citi CSV-ul")
     return _construieste_raspuns(df)
 
 
 @app.get("/demo")
 def demo():
+    cale = Path(__file__).parent.parent / "data" / "tranzactii.csv"
+    if not cale.exists():
+        genereaza_date()
     df = incarca_csv()
     return _construieste_raspuns(df)
